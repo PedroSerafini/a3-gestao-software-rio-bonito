@@ -5,7 +5,8 @@ exports.criar = (req, res) => {
     const doacao = DoacaoService.criarDoacaoService(req.body);
     return res.status(201).json(doacao);
   } catch (error) {
-    return res.status(400).json({ erro: error.message });
+    const msg = error.message || "Erro ao criar doação";
+    return res.status(400).json({ erro: msg });
   }
 };
 
