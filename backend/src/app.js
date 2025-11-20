@@ -9,4 +9,7 @@ app.use(express.json());
 const voluntarioRoutes = require('./routes/voluntario.routes.js');
 app.use('/api', voluntarioRoutes);
 
+const doacaoRoutes = require("./routes/doacaoRoutes");
+app.use("/doacoes", doacaoRoutes);
+
 module.exports = app;
