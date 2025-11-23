@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import HomePage from "./HomePage";
+import CadastroPage from "./CadastroPage";
+import ListarPage from "./ListarPage";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/cadastro" element={<CadastroPage />} />
+        <Route path="/listar" element={<ListarPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+const styles = {
+  container: {
+    height: "100vh",
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundSize: "cover",
+    backgroundColor: "#000000ff",
+    fontFamily: "Arial, sans-serif",
+  },
+  title: {
+    fontSize: "32px",
+    fontWeight: "bold",
+    marginBottom: "15px",
+  },
+  subtitle: {
+    fontSize: "18px",
+    marginBottom: "25px",
+  },
+  buttonContainer: {
+    display: "flex",
+    gap: "20px",
+  },
+  button: {
+    padding: "12px 24px",
+    fontSize: "16px",
+    borderRadius: "8px",
+    border: "none",
+    cursor: "pointer",
+    backgroundColor: "#4A90E2",
+    color: "#fff",
+    transition: "0.3s",
+  },
+};
+
+export default App;
+
