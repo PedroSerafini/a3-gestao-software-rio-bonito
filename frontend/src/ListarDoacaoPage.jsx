@@ -1,22 +1,37 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function ListarPage() {
-  const [voluntarios, setVoluntarios] = useState([]);
+export default function ListarDoacaoPage() {
+  const [doacoes, setDoacoes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/voluntarios")
+    // Ajuste a URL se necessário
+    fetch("http://localhost:3000/api/doacoes")
       .then((res) => res.json())
       .then((data) => {
-        setVoluntarios(data);
+        setDoacoes(data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Erro ao buscar voluntários:", err);
+        console.error("Erro ao buscar doações:", err);
         setLoading(false);
       });
   }, []);
+
+  // Função auxiliar para formatar data
+  const formatDate = (isoString) => {
+    if (!isoString) return "-";
+    return new Date(isoString).toLocaleDateString("pt-BR");
+  };
+
+  // Função auxiliar para formatar dinheiro
+  const formatCurrency = (value) => {
+    return Number(value).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  };
 
   return (
     <div style={styles.container}>
@@ -27,46 +42,54 @@ export default function ListarPage() {
             ← Voltar
           </Link>
           <div style={styles.titleContainer}>
-            <h2 style={styles.title}>Lista de Voluntários</h2>
+            <h2 style={styles.title}>Histórico de Doações</h2>
             <p style={styles.subtitle}>
-              {loading ? "Carregando..." : `${voluntarios.length} registros encontrados`}
+              {loading ? "Carregando..." : `${doacoes.length} registros encontrados`}
             </p>
           </div>
         </div>
 
-        {/* Tabela */}
+        {/* Conteúdo */}
         {loading ? (
           <div style={styles.loadingState}>
             <p>Buscando dados...</p>
           </div>
-        ) : voluntarios.length === 0 ? (
+        ) : doacoes.length === 0 ? (
           <div style={styles.emptyState}>
-            <p>Nenhum voluntário cadastrado ainda.</p>
+            <p>Nenhuma doação registrada ainda.</p>
           </div>
         ) : (
           <div style={styles.tableContainer}>
             <table style={styles.table}>
               <thead>
                 <tr>
-                  <th style={styles.thFirst}>Nome</th>
-                  <th style={styles.th}>CPF</th>
-                  <th style={styles.th}>Celular</th>
-                  <th style={styles.thLast}>Localização</th>
+                  <th style={styles.thFirst}>Data</th>
+                  <th style={styles.th}>Doador</th>
+                  <th style={styles.th}>Valor</th>
+                  <th style={styles.thLast}>Mensagem</th>
                 </tr>
               </thead>
               <tbody>
-                {voluntarios.map((vol, index) => (
+                {doacoes.map((item, index) => (
                   <tr 
-                    key={index} 
+                    key={item.id || index} 
                     style={index % 2 === 0 ? styles.trEven : styles.trOdd}
                   >
                     <td style={styles.tdFirst}>
-                      <span style={styles.nameText}>{vol.nome}</span>
+                        <span style={styles.dateTag}>{formatDate(item.data)}</span>
                     </td>
-                    <td style={styles.td}>{vol.cpf}</td>
-                    <td style={styles.td}>{vol.celular}</td>
+                    <td style={styles.td}>
+                        <span style={styles.nameText}>{item.nomeDoador}</span>
+                    </td>
+                    <td style={styles.td}>
+                        <span style={styles.moneyText}>{formatCurrency(item.valor)}</span>
+                    </td>
                     <td style={styles.tdLast}>
-                      {vol.cidade} <span style={styles.ufTag}>{vol.uf}</span>
+                        {item.mensagem ? (
+                            <span style={styles.msgText}>{item.mensagem}</span>
+                        ) : (
+                            <span style={styles.emptyText}>-</span>
+                        )}
                     </td>
                   </tr>
                 ))}
@@ -80,12 +103,13 @@ export default function ListarPage() {
 }
 
 const styles = {
+  // Reutilizando exatamente o mesmo Design System
   container: {
     minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
-    alignItems: "flex-start", // Alinha no topo, mas com margem
-    paddingTop: "60px", // Espaço do topo
+    alignItems: "flex-start",
+    paddingTop: "60px",
     backgroundColor: "#f3f4f6",
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
     padding: "40px 20px",
@@ -93,10 +117,10 @@ const styles = {
   card: {
     backgroundColor: "#ffffff",
     padding: "40px",
-    borderRadius: "16px", // Mantendo o padrão arredondado
+    borderRadius: "16px",
     boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
     width: "100%",
-    maxWidth: "900px", // Card mais largo para a tabela caber bem
+    maxWidth: "900px",
   },
   header: {
     display: "flex",
@@ -130,9 +154,8 @@ const styles = {
     color: "#6b7280",
     margin: 0,
   },
-  // Estilos da Tabela
   tableContainer: {
-    overflowX: "auto", // Para responsividade em telas pequenas
+    overflowX: "auto",
     borderRadius: "8px",
     border: "1px solid #e5e7eb",
   },
@@ -141,9 +164,8 @@ const styles = {
     borderCollapse: "collapse",
     backgroundColor: "#fff",
   },
-  // Cabeçalho da Tabela
   th: {
-    backgroundColor: "#2563eb", // Azul Padrão do sistema
+    backgroundColor: "#2563eb",
     color: "#fff",
     padding: "16px",
     textAlign: "left",
@@ -158,7 +180,7 @@ const styles = {
     textAlign: "left",
     fontSize: "14px",
     fontWeight: "600",
-    borderTopLeftRadius: "8px", // Arredondar canto superior esquerdo
+    borderTopLeftRadius: "8px",
   },
   thLast: {
     backgroundColor: "#2563eb",
@@ -167,15 +189,11 @@ const styles = {
     textAlign: "left",
     fontSize: "14px",
     fontWeight: "600",
-    borderTopRightRadius: "8px", // Arredondar canto superior direito
+    borderTopRightRadius: "8px",
   },
-  // Linhas
-  trEven: {
-    backgroundColor: "#ffffff",
-  },
-  trOdd: {
-    backgroundColor: "#f9fafb", // Zebra striping (cinza muito claro)
-  },
+  trEven: { backgroundColor: "#ffffff" },
+  trOdd: { backgroundColor: "#f9fafb" },
+  
   td: {
     padding: "16px",
     borderBottom: "1px solid #e5e7eb",
@@ -187,27 +205,39 @@ const styles = {
     borderBottom: "1px solid #e5e7eb",
     color: "#111827",
     fontWeight: "500",
+    width: "120px", // Data fixa
   },
   tdLast: {
     padding: "16px",
     borderBottom: "1px solid #e5e7eb",
     color: "#4b5563",
     fontSize: "14px",
+    maxWidth: "300px", // Limita largura da mensagem
   },
-  // Elementos internos
+  
+  // Elementos de Texto Específicos
   nameText: {
     fontWeight: "600",
     color: "#1f2937",
   },
-  ufTag: {
-    backgroundColor: "#e5e7eb",
-    padding: "2px 6px",
-    borderRadius: "4px",
-    fontSize: "12px",
-    fontWeight: "bold",
-    marginLeft: "5px",
-    color: "#374151",
+  dateTag: {
+    fontSize: "13px",
+    color: "#6b7280",
+    fontFamily: "monospace", // Estilo técnico para datas
   },
+  moneyText: {
+    color: "#059669", // Verde (Success) para dinheiro
+    fontWeight: "bold",
+  },
+  msgText: {
+    fontStyle: "italic",
+    color: "#6b7280",
+  },
+  emptyText: {
+    color: "#9ca3af",
+  },
+  
+  // States
   loadingState: {
     textAlign: "center",
     padding: "40px",
