@@ -18,6 +18,24 @@ export default function ListarPage() {
       });
   }, []);
 
+  function handleDelete(id) {
+    if (!window.confirm("Tem certeza que deseja excluir este voluntário?")) return;
+  
+    fetch(`http://localhost:3000/api/voluntarios/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Erro ao deletar");
+        // Atualiza a lista sem precisar recarregar a página
+        setVoluntarios((prev) => prev.filter((v) => v.id !== id));
+      })
+      .catch((err) => {
+        console.error("Erro ao deletar voluntário:", err);
+        alert("Erro ao deletar o voluntário.");
+      });
+  }
+  
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -48,10 +66,12 @@ export default function ListarPage() {
             <table style={styles.table}>
               <thead>
                 <tr>
-                  <th style={styles.thFirst}>Nome</th>
+                  <th style={styles.thFirst}>Id</th>
+                  <th style={styles.th}>Nome</th>
                   <th style={styles.th}>CPF</th>
                   <th style={styles.th}>Celular</th>
-                  <th style={styles.thLast}>Localização</th>
+                  <th style={styles.th}>Localização</th>
+                  <th style={styles.thLast}></th>
                 </tr>
               </thead>
               <tbody>
@@ -61,12 +81,23 @@ export default function ListarPage() {
                     style={index % 2 === 0 ? styles.trEven : styles.trOdd}
                   >
                     <td style={styles.tdFirst}>
+                      {vol.id}
+                    </td>
+                    <td style={styles.td}>
                       <span style={styles.nameText}>{vol.nome}</span>
                     </td>
                     <td style={styles.td}>{vol.cpf}</td>
                     <td style={styles.td}>{vol.celular}</td>
                     <td style={styles.tdLast}>
                       {vol.cidade} <span style={styles.ufTag}>{vol.uf}</span>
+                    </td>
+                    <td style={styles.tdLast}>
+                      <button 
+                        style={styles.deleteButton}
+                        onClick={() => handleDelete(vol.id)}
+                      >
+                        Excluir
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -220,4 +251,18 @@ const styles = {
     backgroundColor: "#f9fafb",
     borderRadius: "8px",
   },
+  deleteButton: {
+    backgroundColor: "#dc2626",
+    color: "white",
+    border: "none",
+    padding: "8px 12px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "13px",
+    fontWeight: "600",
+    transition: "0.2s",
+  },
+  deleteButtonHover: {
+    backgroundColor: "#b91c1c",
+  }
 };

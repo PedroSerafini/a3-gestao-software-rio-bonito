@@ -30,7 +30,13 @@ async function listarVoluntarios() {
   return voluntarioRepository.getAll();
 }
 
+async function removerPorId(id) {
+  const removido = await voluntarioRepository.deletePorId(Number(id));
+  return removido;
+}
+
 module.exports = {
   criarVoluntario,
   listarVoluntarios,
+  removerPorId
 };

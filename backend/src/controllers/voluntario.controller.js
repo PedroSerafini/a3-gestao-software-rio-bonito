@@ -22,7 +22,24 @@ async function listar(req, res) {
   }
 }
 
+async function remover(req, res) {
+  try {
+    const id = req.params.id;
+    const removido = await voluntarioService.removerPorId(id);
+
+    if (!removido) {
+      return res.status(404).json({ message: 'Voluntário não encontrado' });
+    }
+
+    res.status(200).json({ message: 'Voluntário removido com sucesso' });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   criar,
   listar,
+  remover
 };
