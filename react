@@ -1,0 +1,108 @@
+import React, { useState } from "react";
+
+export default function PesquisaVoluntarios() {
+  const [form, setForm] = useState({
+    nome: "",
+    motivo: "",
+    opiniao: "",
+    melhorias: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("/controller/salvarPesquisa.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (response.ok) {
+        alert("Pesquisa enviada com sucesso!");
+        setForm({ nome: "", motivo: "", opiniao: "", melhorias: "" });
+      } else {
+        alert("Erro ao enviar pesquisa.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao conectar com o servidor.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-lg p-8 rounded-2xl shadow-xl">
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-700">
+          Pesquisa de Voluntários
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="font-semibold">Nome do voluntário (opcional)</label>
+            <input
+              type="text"
+              name="nome"
+              value={form.nome}
+              onChange={handleChange}
+              className="w-full mt-1 p-3 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div>
+            <label className="font-semibold">
+              1. Por qual motivo você se voluntariou? (opcional)
+            </label>
+            <textarea
+              name="motivo"
+              value={form.motivo}
+              onChange={handleChange}
+              className="w-full mt-1 p-3 border rounded-xl bg-gray-50 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div>
+            <label className="font-semibold">
+              2. Qual sua opinião sobre o projeto? (opcional)
+            </label>
+            <textarea
+              name="opiniao"
+              value={form.opiniao}
+              onChange={handleChange}
+              className="w-full mt-1 p-3 border rounded-xl bg-gray-50 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div>
+            <label className="font-semibold">
+              3. Como podemos melhorar? (opcional)
+            </label>
+            <textarea
+              name="melhorias"
+              value={form.melhorias}
+              onChange={handleChange}
+              className="w-full mt-1 p-3 border rounded-xl bg-gray-50 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white p-3 rounded-xl font-semibold hover:bg-blue-700 transition"
+          >
+            Enviar Pesquisa
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-gray-500 mt-4">
+          Obrigado por participar e ajudar o projeto!
+        </p>
+      </div>
+    </div>
+  );
+}

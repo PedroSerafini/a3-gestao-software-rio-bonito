@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS pesquisa_voluntarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NULL,
+    motivo TEXT NULL,
+    opiniao TEXT NULL,
+    melhorias TEXT NULL,
+    data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
